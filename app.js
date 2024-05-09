@@ -43,3 +43,16 @@ async function run(){
 }
 
 run();
+
+async function updateGift(id){
+    const gift = await Gift.findByIdAndUpdate({_id: id}, {
+        $set: {
+            name: "father's day box",
+            category: ['men'],
+            description: 'Bring joy to your father with this box',
+            tags:["father's day"]
+        }
+    }, {new: true});
+    console.log(gift);
+};
+updateGift("663c13902e0b0763ee3d8aca");
