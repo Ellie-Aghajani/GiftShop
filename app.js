@@ -1,14 +1,23 @@
+const { array } = require('joi');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/giftshop')
     .then(() => console.log("connected to mongodb ..."))
     .catch(err => console.log(err.message));
 
 const giftSchema = new mongoose.Schema({
-    name: String,
+    name: { type: String, required: true},
     category: [String],
-    description: String,
+    description: { type: String, required: true},
     imageURL:String,
-    tags:[String],
+    tags:{
+        type: Array,
+        validate: {
+            validator: function (v){
+                return v.length > 0;
+            },
+            message: 'A gift must have at least one tag.'
+        }
+    },
     createdAt:{ type: Date, default: Date. now }
 
 });
@@ -21,17 +30,16 @@ async function createGift(){
             name: "Mother's day box",
             category: ['women'],
             description: 'Bring joy to your mother with this box',
-            imageURL:String,
-            tags:["Mother's day"]
+            imageURL:String
         });
         const result = await gift.save();
         console.log(result);
 
     }
-    catch(err){err => console.log('Erorr creating gift: ', err.message)};
+    catch(err){ console.log('Error creating gift: ', err.message)};
 
 };
-// createGift();
+createGift();
 async function getGifts(){
     return await Gift.find();
 
@@ -56,3 +64,11 @@ async function updateGift(id){
     console.log(gift);
 };
 updateGift("663c13902e0b0763ee3d8aca");
+
+
+async function deleteGift(id){
+    const result = await Gift.findByIdAndDelete({_id: id });
+    console.log(result);
+}
+
+deleteGift("663c13902e0b0763ee3d8aca");
